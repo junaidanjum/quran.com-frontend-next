@@ -5,16 +5,19 @@ import classNames from 'classnames';
 import dynamic from 'next/dynamic';
 import useTranslation from 'next-translate/useTranslation';
 
+import { RepetitionMode } from '../AudioPlayer/RepeatAudioModal/SelectRepetitionMode';
 import cellStyles from '../QuranReader/TranslationView/TranslationViewCell.module.scss';
 
 import styles from './OverflowVerseActionsMenuBody.module.scss';
 
+import RepeatAudioModal from '@/components/AudioPlayer/RepeatAudioModal/RepeatAudioModal';
 import Button, { ButtonShape, ButtonSize, ButtonVariant } from '@/dls/Button/Button';
 import IconContainer, { IconColor, IconSize } from '@/dls/IconContainer/IconContainer';
 import PopoverMenu from '@/dls/PopoverMenu/PopoverMenu';
 import Spinner from '@/dls/Spinner/Spinner';
 import OverflowMenuIcon from '@/icons/menu_more_horiz.svg';
 import { logEvent } from '@/utils/eventLogger';
+import { getChapterNumberFromKey } from '@/utils/verse';
 import Verse from 'types/Verse';
 
 const OverflowVerseActionsMenuBody = dynamic(() => import('./OverflowVerseActionsMenuBody'), {
@@ -39,6 +42,8 @@ const OverflowVerseActionsMenu: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation('common');
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isRepeatModalOpen, setIsRepeatModalOpen] = React.useState(false);
+  const chapterId = getChapterNumberFromKey(verse.verseKey);
   const onOpenModalChange = React.useCallback(
     (open: boolean) => {
       if (open === isMenuOpen) return;
@@ -54,6 +59,13 @@ const OverflowVerseActionsMenu: React.FC<Props> = ({
 
   return (
     <div className={styles.container}>
+      <RepeatAudioModal
+        defaultRepetitionMode={RepetitionMode.Single}
+        selectedVerseKey={verse.verseKey}
+        chapterId={chapterId.toString()}
+        isOpen={isRepeatModalOpen}
+        onClose={() => setIsRepeatModalOpen(false)}
+      />
       <PopoverMenu
         contentClassName={classNames(cellStyles.menuOffset, cellStyles.overlayModal)}
         isOpen={isMenuOpen}
@@ -94,6 +106,7 @@ const OverflowVerseActionsMenu: React.FC<Props> = ({
           verse={verse}
           isTranslationView={isTranslationView}
           onActionTriggered={onActionTriggered}
+          onRepeatClick={() => setIsRepeatModalOpen(true)}
           isInsideStudyMode={isInsideStudyMode}
         />
       </PopoverMenu>

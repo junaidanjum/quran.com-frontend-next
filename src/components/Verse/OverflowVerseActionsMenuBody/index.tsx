@@ -19,6 +19,7 @@ interface Props {
   verse: Verse;
   isTranslationView: boolean;
   onActionTriggered?: () => void;
+  onRepeatClick: () => void;
   isInsideStudyMode?: boolean;
 }
 
@@ -26,6 +27,7 @@ const OverflowVerseActionsMenuBody: React.FC<Props> = ({
   verse,
   isTranslationView,
   onActionTriggered,
+  onRepeatClick,
   isInsideStudyMode = false,
 }) => {
   const [selectedMenu, setSelectedMenu] = useState<VerseActionsMenuType>(VerseActionsMenuType.Main);
@@ -48,7 +50,11 @@ const OverflowVerseActionsMenuBody: React.FC<Props> = ({
         <WordByWordVerseAction verse={verse} onActionTriggered={onActionTriggered} />
       )}
       {!isStudyModeOpen && (
-        <VerseActionRepeatAudio isTranslationView={isTranslationView} verseKey={verse.verseKey} />
+        <VerseActionRepeatAudio
+          isTranslationView={isTranslationView}
+          onActionTriggered={onActionTriggered}
+          onRepeatClick={onRepeatClick}
+        />
       )}
       <TranslationFeedbackAction
         verse={verse}
